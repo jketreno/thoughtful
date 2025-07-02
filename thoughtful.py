@@ -7,6 +7,7 @@
 #
 # See README.md for details on how to set up the environment.
 
+from typing import TypedDict
 from dotenv import load_dotenv
 import json
 from pydantic import BaseModel, Field
@@ -77,15 +78,21 @@ match llm_mode:
         model_name = os.getenv("MODEL_NAME", "qwen2.5:7b")
         openai_api_key = os.getenv("OPENAI_API_KEY", "not-used")
         openai_url = os.getenv("OPENAI_URL", None)
-        provider_config = {"api_key": openai_api_key}
-        # Create a dict for the OpenAIProvider configuration.
-        if openai_url:
-            provider_config["base_url"] = openai_url
+        class ProviderConfig(TypedDict):
+            api_key: str
+            base_url: str | None
+        provider_config : ProviderConfig = {
+            "api_key": openai_api_key, 
+            "base_url": openai_url
+        }
         model = OpenAIModel(
             model_name=model_name,
             provider=OpenAIProvider(**provider_config),
         )
-        print(f"Using Ollama with {model_name} for chat session.")
+        print(
+            f"Using Ollama with {model_name} for chat session"
+            f"{f' at {openai_url}' if openai_url else ''}."
+        )
     case "claude":
         from pydantic_ai.models.anthropic import AnthropicModel
 
