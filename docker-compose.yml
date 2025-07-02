@@ -1,0 +1,14 @@
+services:
+  thoughtful:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: thoughtful
+    restart: "always"
+    env_file:
+      - .env
+    volumes:
+      - ./venv:/opt/python/venv:rw                # Live mount venv persisting
+      - ./thoughtful.py:/opt/python/thoughtful.py # Live mount for live edits...
+      - ./requirements.txt:/opt/python/requirements.txt
+    
